@@ -6,50 +6,25 @@
 (defn new-player
       "Make a new player"
       [name] (struct-map player-template :name name))
-(def Player (ref (new-player "")))
-
-(defn class-resolver
-  "Populate class specific attributes"
-  [class] (cond
-            (= class "Human") (dosync (ref-set Player (merge @Player {:race "human" :str 3 :dex 2 :int 5 :xp 0 :prog 0})))
-            (= class "Elf") (dosync (ref-set Player (merge @Player {:race "elf" :str 2 :dex 5 :int 3 :xp 0 :prog 0})))
-            (= class "Orc") (dosync (ref-set Player (merge @Player {:race "orc" :str 5 :dex 2 :int 3 :xp 0 :prog 0})))
-            ))
-
-(defn primary-atribute-resolver
-  "Sets the primary attribute of a hero - and a difficulty"
-  [primary] (dosync (ref-set Player (assoc-in @Player [:prim] primary))))
-
-(defn onto-class-selection "To class selection screen" [name]
-  (dosync (ref-set Player (assoc-in @Player [:name] name)))
-  (pages/character-creation))
-
-(defn onto-difficulty-screen "To the difficulty selection screen" [race]
-  (class-resolver race)
-  (pages/difficulty-selection (@Player :race) (@Player :name)))
-
-(defn onto-history-screen "To the history story screen" [primary]
-  (primary-atribute-resolver primary)
-  (pages/heros-history (@Player :race) (@Player :name)))
-
-(defn onto-main-screen "To the main, city, screen" [city]
-  (pages/city-ambient city))
-
+(defn city-selector
+  "Selects a city based on the player's progress (:prog) in game"
+  [player] (cond
+            (< (player :prog) 3) "Arniacg"
+            :else "to be continued..."
+             ))
 (defroutes routes-def
   (GET "/" [] (pages/landing))
-  (POST "/begin" [hero-name race] (if-not (clojure.string/blank? hero-name) 
-                                   (onto-class-selection hero-name) 
-                                   (if-not (clojure.string/blank? race) 
-                                     (onto-difficulty-screen race)
-                                   )
-                                   ))
-  (POST "/intro" [primary] (if-not (clojure.string/blank? primary) 
-                                   (onto-history-screen primary) 
-                                   ))
-  (POST "/game" [city talk] (if-not (clojure.string/blank? city) 
-                                   (onto-main-screen city)
+  (POST "/begin" [hero-name player] (if-not (clojure.string/blank? hero-name) 
+                                     (pages/character-creation (new-player hero-name))
+                                     (if-not (nil? player) 
+                                       (pages/difficulty-selection (read-string player))
+                                     )))
+  (POST "/intro" [player] (if-not (nil? player) 
+                                   (pages/heros-history (read-string player))))
+  (POST "/game" [talk explore rest player day] (if-not (nil? player) 
+                                   (pages/city-ambient (read-string player) (city-selector (read-string player)) (if (nil? day) 0 (inc (read-string day))))
                                    ;for testing
-                                   (onto-main-screen "Arniacg")
+                                   ;(pages/city-ambient heroj city)
                                    ))
   ;(POST "/begin" [name :as u] (pages/character-creation name u))
   ;(GET "/kreni" [id] (stranice/id)))
