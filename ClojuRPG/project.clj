@@ -7,6 +7,7 @@
                  [compojure "1.1.8"]
                  [ring "1.3.0"]
                  [hiccup "1.0.5"]
+                 [org.clojure/math.numeric-tower "0.0.4"]
                  ]
   :plugins [[lein-ring "0.8.11"]]
   :ring {:handler ClojuRPG.core/route
