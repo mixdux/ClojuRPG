@@ -46,27 +46,13 @@
                                  (for [iter-progress progress-vector :when (= iter-progress progress)]
                                   iter-progress))))
 
+(defmulti multiprogress (fn [base player arg & current-day-or-extra] base))
+  
 (defn progress-increment
   "Increments the progress of the player
    if the criteria (base) provided is in
    required relation with the :prog stat"
-  ([base player arg & current-day-or-extra] (condp = base
-                                              ;[2 5 8 9] Increase progress only if current :prog is equal to one of the given numbers
-                                              "prog" (if-not (progress-prog-check arg (:prog player))
-                                                       1 0)
-                                              ;[[200 3] [350 5] [520 7]] = [min-xp-for-prog-up min-prog-to-trigger-incrementation]
-                                              "xp" (if-not (day-or-xp-progress-check (:xp player) arg (:prog player))
-                                                     1 0)
-                                              ;[[21 2] [33 4] [52 6]] = [min-days-for-prog-up min-prog-to-trigger-incrementation]
-                                              "day" (if-not (day-or-xp-progress-check current-day-or-extra arg (:prog player)) 
-                                                      1 0)
-                                              ;[[3 7] [6 10] [8 14]] = [min-lvl-for-prog-up min-prog-to-trigger-incrementation]
-                                              "level" (if-not (level-progress-check current-day-or-extra arg (:prog player)) 
-                                                      1 0)
-                                              ;If a special event occured - amount of days or amount of XP has been gathered
-                                              ;imput parameter example: "special" player [[21 300] [26 400]] [2 ["=" "="]]
-                                              ;call parameter example [2 150] ["=" "="] [[21 300] [26 400]]
-                                              "special" (special-check [(first current-day-or-extra) (:xp player)] (rest current-day-or-extra) arg))))
+  ([base player arg & current-day-or-extra] (multiprogress base player arg current-day-or-extra)))
 
 (defn progres-checker
   "Checks if any of the conditions have
@@ -78,3 +64,31 @@
                                                                                (progress-increment "xp" player xp-vector)
                                                                                (progress-increment "day" player day-vector day)
                                                                                (progress-increment "level" player lvl-vector level)])))
+
+;-----> Multimethods ahead! <-----
+
+;[2 5 8 9] Increase progress only if current :prog is equal to one of the given numbers
+(defmethod multiprogress "prog" [base player arg & current-day-or-extra] 
+  (if-not (progress-prog-check arg (:prog player))
+    1 0))
+
+;[[200 3] [350 5] [520 7]] = [min-xp-for-prog-up min-prog-to-trigger-incrementation]
+(defmethod multiprogress "xp" [base player arg & current-day-or-extra] 
+  (if-not (day-or-xp-progress-check (:xp player) arg (:prog player))
+    1 0))
+  
+;[[21 2] [33 4] [52 6]] = [min-days-for-prog-up min-prog-to-trigger-incrementation]  
+(defmethod multiprogress "day" [base player arg & current-day-or-extra] 
+  (if-not (day-or-xp-progress-check current-day-or-extra arg (:prog player)) 
+    1 0))
+
+;[[3 7] [6 10] [8 14]] = [min-lvl-for-prog-up min-prog-to-trigger-incrementation]
+(defmethod multiprogress "level" [base player arg & current-day-or-extra] 
+  (if-not (level-progress-check current-day-or-extra arg (:prog player)) 
+    1 0))
+
+;If a special event occured - amount of days or amount of XP has been gathered
+;imput parameter example: "special" player [[21 300] [26 400]] [2 ["=" "="]]
+;call parameter example [2 150] ["=" "="] [[21 300] [26 400]]
+(defmethod multiprogress "special" [base player arg & current-day-or-extra] 
+  (special-check [(first current-day-or-extra) (:xp player)] (rest current-day-or-extra) arg))

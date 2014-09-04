@@ -16,16 +16,12 @@
             (< (:prog player) 6) "Arniacg"
             :else "Tomorrowland"))
 
+(defmulti multiaction (fn [player day action increase & redirect] action))
+
 (defn action-selector
   "Determines the action that the player wants to make"
-  [player day action increase & redirect] (cond
-            (= action "people") (pages/talk player day action increase)
-            (= action "elders") (pages/talk player day action increase)
-            (= action "explore") (if (= 1 (read-string (last (last redirect))))
-                                   (pages/talk player day "redirect-explore" increase)
-                                   (pages/explore player day (city-selector player) increase))
-            (= action "travel") (pages/talk player day action increase)
-            :else (pages/debug "Action not supported")))
+  [player day action increase & redirect]
+  (multiaction player day action increase redirect))
 
 (defroutes routes-def
   (GET "/" [] (pages/landing))
@@ -50,4 +46,20 @@
   ;(ANY "*" [] (route/not-found (slurp (io/resource "404.html")))))
   
 (def route (ring.middleware.params/wrap-params routes-def))
+
+;-----> Multimethods ahead! <-----
+
+(defmethod multiaction "people" [player day action increase & redirect] 
+  (pages/talk player day action increase))
+
+(defmethod multiaction "elders" [player day action increase & redirect] 
+  (pages/talk player day action increase))
+
+(defmethod multiaction "explore" [player day action increase & redirect] 
+  (if (= 1 (read-string (last (last (first redirect)))))
+    (pages/talk player day "redirect-explore" increase)
+    (pages/explore player day (city-selector player) increase)))
+
+(defmethod multiaction "travel" [player day action increase & redirect] 
+  (pages/talk player day action increase))
 

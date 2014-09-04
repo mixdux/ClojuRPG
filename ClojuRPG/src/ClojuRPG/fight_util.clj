@@ -2,7 +2,6 @@
   (:require [ClojuRPG.util :as util]
             [clojure.math.numeric-tower :as math]
             [ClojuRPG.hero-util :as hero-util]))
-            ;[ClojuRPG.localisation :as localisation-txt]))
 
 (defn fight-number-calculator
   "Calculates the number of points for
@@ -31,24 +30,12 @@
                                             p-s-i-p))
                               (hero-util/player-lvl-increment-primary lvl-inc player))))))
 
-;Elf>Satyr>Human Human>Centaur>Orc Orc>Gnoll>Elf
+(defmulti multibonus (fn [race spicies percent] race))
 
 (defn get-race-bonus
   "Gives multiplier for each player race
    when fights a monster"
-  [race spicies percent] (condp = race
-                           "human" (condp = spicies
-                                     "satyr" (- 1 (* percent 0.01))
-                                     "centaur" (+ 1 (* percent 0.01))
-                                     "gnoll" 1)
-                           "orc" (condp = spicies
-                                   "satyr" 1
-                                   "centaur" (- 1 (* percent 0.01))
-                                   "gnoll" (+ 1 (* percent 0.01)))
-                           "elf" (condp = spicies
-                                   "satyr" (+ 1 (* percent 0.01))
-                                   "centaur" 1
-                                   "gnoll" (- 1 (* percent 0.01)))))
+  [race spicies percent] (multibonus race spicies percent))
 
 (defn resolve-fight
   "Returns 1 if the player defeats a monster,
@@ -103,3 +90,23 @@
   [monsters player] (if-not (nil? monsters)
                       (for [attacker monsters :while (= 1 (resolve-fight attacker player))] 
                         (won-encounter-report player attacker))))
+
+;Elf>Satyr>Human Human>Centaur>Orc Orc>Gnoll>Elf
+
+(defmethod multibonus "human" [race spicies percent] 
+  (condp = spicies
+    "satyr" (- 1 (* percent 0.01))
+    "centaur" (+ 1 (* percent 0.01))
+    "gnoll" 1))
+
+(defmethod multibonus "orc" [race spicies percent] 
+  (condp = spicies
+    "satyr" 1
+    "centaur" (- 1 (* percent 0.01))
+    "gnoll" (+ 1 (* percent 0.01))))
+
+(defmethod multibonus "elf" [race spicies percent] 
+  (condp = spicies
+    "satyr" (+ 1 (* percent 0.01))
+    "centaur" 1
+    "gnoll" (- 1 (* percent 0.01))))

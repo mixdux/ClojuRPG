@@ -20,6 +20,7 @@
                                                    ter-p (+ ter (rand-int (inc (- progress (+ (- prim-p prim) (- sec-p sec))))))]
                                               [ter-p sec-p prim-p])))
 
+(defmulti multimonster (fn [race progress] race))
 
 (defn race-attribute-deployer
   "Deploys attribute amounts for each race;
@@ -31,13 +32,7 @@
    variable i.e. not send plain progress, but
    increment it by 2, or add it player's level
    (in order to get stornger opponents)"
-  [race progress] (condp = race
-           "satyr" (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
-                       [(last attr-vec) (first attr-vec) (second attr-vec)])
-           "centaur" (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
-                       [(first attr-vec) (last attr-vec) (second attr-vec)])
-           "gnoll" (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
-                       [(second attr-vec) (first attr-vec) (last attr-vec)])))
+  [race progress] (multimonster race progress))
 
 (defn race-primary-resolver
   "Specifies the primary attribute for each race"
@@ -67,3 +62,17 @@
   [player] (take (rand-int (+ 1 ((read-string (:prim player)) player))) 
                  (repeatedly 
                    #(create-a-monster (:prog player)))))
+
+;-----> Multimethods ahead! <-----
+
+(defmethod multimonster "satyr" [race progress] 
+  (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
+    [(last attr-vec) (first attr-vec) (second attr-vec)]))
+
+(defmethod multimonster "centaur" [race progress] 
+  (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
+    [(first attr-vec) (last attr-vec) (second attr-vec)]))
+
+(defmethod multimonster "gnoll" [race progress] 
+  (let [attr-vec (attribute-stat-randomizer [2 3 5] progress)]
+    [(second attr-vec) (first attr-vec) (last attr-vec)]))

@@ -230,7 +230,7 @@
                                                                    [:br] (submit-button (util/suffix-specific-text "explore-button" (:prog player))))]]])))
 
 (defn debug 
-  "Write an element in h1"
+  "Write an element in h1 style"
   [id] (html5 [:html
                [:head
                 [:title "ClojuRPG"]
