@@ -404,6 +404,6 @@
   "What shall be written on the first travel screen button"
   "Adventure!")
 
-(def talk-to-the-elders-3
+(def talk-to-the-elders-6
   "What will be written onto second button of the city"
   "by Milan Đorić")
