@@ -3,7 +3,13 @@ ClojuRPG
 
 A browser text RPG, fully written in Clojure!
 
-This is my first big project coded in Clojure and none of the functions used are hard to understand or reproduce. ClojuRPG is designed to be changed to fit everyone's RPG developing needs. From the first lines, it is designed so that it can be easily molded, with minimal code alterations, so that one can make it's own RPG by rewriting text and adding progress marks 
+This is my first big project coded in Clojure and none of the functions used are hard to understand or reproduce. ClojuRPG is designed to be changed to fit everyone's RPG developing needs. From the first lines, it is designed to serve as a template, so it can be easily molded and with minimal code alterations, one can make it's own RPG by rewriting text and adding required progress marks. 
+
+It utilises several external libreries:
+ - Compojure (for routing - handling movement from page to page)
+ - Hiccup (for HTML - making pages look as they do)
+ - Clojure.math.numeric-tower (functions for fight calculations)
+
 Text
 ----
 There is a separate nemaspace called Localisation and all text is contained there. Should you change it so you create your own RPG, make shure that all the story is contained there (whith the appropriate naming, of course)
@@ -29,6 +35,8 @@ Fully creates the monsters the player has to fight; makes their class, name and 
 Conteins logic for progress checking and incrementation. Progress (:prog player) is the main tool by which one can go through game. Every text and ambient change is closely connected to the amount of progress variable.
  - Util:
 Various utility methods; from getting the right text for current player race, to formatting one as it is required.
+
+Feel free to check out the ClojuRPG's wiki for more detailed information!
 
 
 
