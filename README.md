@@ -10,6 +10,8 @@ It utilises several external libreries:
  - Hiccup (for HTML - making pages look as they do)
  - Clojure.math.numeric-tower (functions for fight calculations)
 
+And of ourse, Ring server for making everything happen.
+
 Text
 ----
 There is a separate nemaspace called Localisation and all text is contained there. Should you change it so you create your own RPG, make shure that all the story is contained there (whith the appropriate naming, of course)
