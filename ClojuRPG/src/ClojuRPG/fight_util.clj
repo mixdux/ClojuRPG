@@ -16,7 +16,7 @@
                        (- 
                          (math/round (*  
                                        ((read-string (:prim monster)) monster) 
-                                       p-s-i-p))
+                                       (* p-s-i-p 0.01)))
                          ((read-string (:prim monster)) monster))))
    ([player p-s-i-p xp] (let [lvl-inc (hero-util/race-stat-level (:race player) xp)]
                           (+ 
@@ -27,7 +27,7 @@
                            (- 
                              (math/round (* 
                                             (hero-util/player-lvl-increment-primary lvl-inc player)
-                                            p-s-i-p))
+                                            (* p-s-i-p 0.01)))
                               (hero-util/player-lvl-increment-primary lvl-inc player))))))
 
 (defmulti multibonus (fn [race species percent] race))

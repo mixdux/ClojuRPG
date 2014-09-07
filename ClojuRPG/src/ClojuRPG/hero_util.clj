@@ -21,7 +21,7 @@
 ;(level-resolver #(math/sqrt %) 15)
 
 (defn difficulty-resolver
-  "Writes the difficulty selection"
+  "Writes the selected difficulty name"
   [race primary] (if (= primary (util/prefix-specific-text race "difficulty-easy"))
                    localisation-txt/smallest-difficulty
                    (if (= primary (util/prefix-specific-text race "difficulty-medium"))

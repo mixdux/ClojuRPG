@@ -1,4 +1,5 @@
-(ns ClojuRPG.progress-util)
+(ns ClojuRPG.progress-util
+  (:use [clojure.set]))
 
 (defn progress-prog-check
   "Checks if current progress is equal
@@ -25,16 +26,6 @@
                                         (for [[min-lvl min-prog]  check-vector :when (>= level min-lvl)]
                                           (if (and (>= progress min-prog) (< progress (+ min-prog 1)))
                                             min-lvl))))
-
-(defn special-check
-  "Check if a special event occured; based on
-   trigger values from vector of [XP day] vectors.
-   Given XP and day are not in any way related,
-   and the ralations between current day-xp vector
-   and check-vector are provided in the operations 
-   vector - [6 140] [\"=\" \">\"] [[12 400] [23 520]]"
-  [day-xp operations check-vector] (for [[iter-xp iter-day] check-vector :when (or ((read-string (first operations)) iter-day (first day-xp)) ((read-string (last operations)) iter-xp (last day-xp)))]
-                                     (if (= iter-day (first day-xp)) ["day" (first day-xp) (first operations)] ["xp" (last day-xp) (last operations)])))
   
 (defn redirect-prog-check
   "Checks if current progress is equal
@@ -65,8 +56,20 @@
                                                                                (progress-increment "day" player day-vector day)
                                                                                (progress-increment "level" player lvl-vector level)])))
 
+(defn special-check
+  "Check if a special event occured; based on
+   trigger values from vector of [XP day] vectors.
+   Given XP and day are not in any way related,
+   and the ralations between current day-xp vector
+   and check-vector are provided in the operations 
+   vector - [6 140] [\"=\" \">\"] [[12 400] [23 520]]"
+  [day-xp operations check-vector] (for [[iter-day iter-xp] check-vector :when (or ((resolve (read-string (first operations))) (first day-xp) iter-day) ((resolve (read-string (last operations))) (last day-xp) iter-xp))]
+                                     (into [] (concat    
+                                       (if ((resolve (read-string (first operations))) (first day-xp) iter-day) ["day" (first day-xp) (first operations) iter-day])
+                                       (if ((resolve (read-string (last operations))) (last day-xp) iter-xp)["xp" (last day-xp) (last operations) iter-xp])))))
+
 ;If a special event occured - amount of days or amount of XP has been gathered
-;imput parameter example: "special" player [[21 300] [26 400]] [2 ["=" "="]]
+;imput parameter example: player [[21 300] [26 400]] [2 ["=" "="]]
 ;call parameter example [2 150] ["=" "="] [[21 300] [26 400]]
 (defn special-checker
   "Checks if the special event has occured,
@@ -78,8 +81,8 @@
    if multiple relate as true (i.e. both day and XP
    have mate the equasion, from the elements provided
    true)"
-  [player arg & day-day-operation-xp-operation]
-  (special-check [(first day-day-operation-xp-operation) (:xp player)] (rest day-day-operation-xp-operation) arg))
+  [player arg day-day-operation-xp-operation]
+  (special-check [(first day-day-operation-xp-operation) (:xp player)] (first (rest day-day-operation-xp-operation)) arg))
 
 ;-----> Multimethods ahead! <-----
 
