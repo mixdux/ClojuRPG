@@ -65,6 +65,22 @@
                                                                                (progress-increment "day" player day-vector day)
                                                                                (progress-increment "level" player lvl-vector level)])))
 
+;If a special event occured - amount of days or amount of XP has been gathered
+;imput parameter example: "special" player [[21 300] [26 400]] [2 ["=" "="]]
+;call parameter example [2 150] ["=" "="] [[21 300] [26 400]]
+(defn special-checker
+  "Checks if the special event has occured,
+   and returns the vector consisting the
+   event (\"day\" or \"XP\"), amount that
+   has triggered the event, and operation that
+   has checked as positive (from the ones provided).
+   IMPORTANT: It will return multiple resaults
+   if multiple relate as true (i.e. both day and XP
+   have mate the equasion, from the elements provided
+   true)"
+  [player arg & day-day-operation-xp-operation]
+  (special-check [(first day-day-operation-xp-operation) (:xp player)] (rest day-day-operation-xp-operation) arg))
+
 ;-----> Multimethods ahead! <-----
 
 ;[2 5 8 9] Increase progress only if current :prog is equal to one of the given numbers
@@ -86,9 +102,3 @@
 (defmethod multiprogress "level" [base player arg & current-day-or-extra] 
   (if-not (level-progress-check current-day-or-extra arg (:prog player)) 
     1 0))
-
-;If a special event occured - amount of days or amount of XP has been gathered
-;imput parameter example: "special" player [[21 300] [26 400]] [2 ["=" "="]]
-;call parameter example [2 150] ["=" "="] [[21 300] [26 400]]
-(defmethod multiprogress "special" [base player arg & current-day-or-extra] 
-  (special-check [(first current-day-or-extra) (:xp player)] (rest current-day-or-extra) arg))

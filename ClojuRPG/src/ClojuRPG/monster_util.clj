@@ -2,7 +2,7 @@
   (:require [clojure.repl :refer :all]            
             [ClojuRPG.util :as util]))
 
-(defstruct monster-template :name :spicies :str :dex :int :prim)
+(defstruct monster-template :name :species :str :dex :int :prim)
 
 (defn attribute-stat-randomizer
   "Randomises stats, taking into account the progress.
@@ -50,7 +50,7 @@
                    attributes-vector (race-attribute-deployer race progress)]
                (struct-map monster-template
                          :name (str (util/suffix-specific-text (str "creature-power-" (rand-int 3)) progress) " " race)
-                         :spicies race
+                         :species race
                          :str (first attributes-vector)
                          :dex (second attributes-vector)
                          :int (last attributes-vector)

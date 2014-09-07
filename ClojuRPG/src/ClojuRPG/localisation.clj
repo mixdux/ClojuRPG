@@ -152,7 +152,7 @@
   ":str")
 (def orc-difficulty-easy-character
   "Occupation of the character for Easy"
-  "forcefull Duelist")
+  "forceful Duelist")
 (def orc-difficulty-easy-description
   "Backstory about Easy difficulty" 
   "Widely known by it's grand body constitution, Orc Duelists are the most wild of all warriors. Pure in hart, with grat strength and vigilance, you shall be a true defender of peace!")
@@ -318,8 +318,8 @@
   "Continue the search for partner")
 
 (def people-headline-2 
-  "Headline for the locals talk, after 0 +1 progress" 
-  "A peacefull town")
+  "Headline for the locals talk, after 1 +1 progress" 
+  "A peaceful town")
 (def people-text-2
   "What the locals will tell you after your first encounter with them"
   "At the peacefull town of Arniacg, nothing worthy of your attention was going on.
@@ -328,7 +328,7 @@
 <br/><br/>You go to the local Town hall to enquire for them, but noone is willing to serve you. They say that you can't do that without the permission of the city Elders.
 <br/><br/>All they told you is to follow the wall to it's origin!")
 (def people-button-2 
-  "What will write on the button to return to the city, after 0 +1 progress" 
+  "What will write on the button to return to the city, after 1 +1 progress" 
   "Exit the Town hall")
 
 (def elders-headline-2 
@@ -381,7 +381,7 @@
 
 (def redirect-explore-headline-4 
   "Headline for the forest talk" 
-  "The grassy hopper")
+  "The Grassy Hopper")
 (def redirect-explore-text-4
   "What dialogue shall you make during your first visit to the forest"
   "So you noted the stranger's tip and carefully entered the dark foresty of Arniacg. Everything went the same as usual, you followed the path you always do.

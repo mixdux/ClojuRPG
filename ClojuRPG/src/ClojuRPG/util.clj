@@ -30,13 +30,23 @@
    Iterates through progress if suffix is a number
    - used when text is not defined for that particular
    amount of progress (returns the last defined)"
-  [text suffix] 
-  (str suffix)(if (string? suffix) 
+  [text suffix] (if (string? suffix) 
                   (value-of-var-from-loc (str text "-" suffix))
                   (first
                     (for [x (reverse (range (+ 1 suffix))) 
                           :when (not (nil? (resolve-var-from-loc (str text "-" x))))]
-                       (value-of-var-from-loc (str text "-" x))))))
+                      (value-of-var-from-loc (str text "-" x))))))
+
+(defn pre-su-text
+  "Makes a combination of prefix and suffix specific text
+   by adding the prefix to it, and then iterating through
+   progress"
+  [prefix text suffix] (if (string? suffix) 
+                         (value-of-var-from-loc (str prefix "-" text "-" suffix))
+                         (first
+                           (for [x (reverse (range (+ 1 suffix))) 
+                                 :when (not (nil? (resolve-var-from-loc (str prefix "-" text "-" x))))]
+                             (value-of-var-from-loc (str prefix "-" text "-" x))))))
 
 (defn player-name-and-status
   "Is used to write players name,

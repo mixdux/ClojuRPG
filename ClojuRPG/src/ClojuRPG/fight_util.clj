@@ -30,19 +30,19 @@
                                             p-s-i-p))
                               (hero-util/player-lvl-increment-primary lvl-inc player))))))
 
-(defmulti multibonus (fn [race spicies percent] race))
+(defmulti multibonus (fn [race species percent] race))
 
 (defn get-race-bonus
   "Gives multiplier for each player race
    when fights a monster"
-  [race spicies percent] (multibonus race spicies percent))
+  [race species percent] (multibonus race species percent))
 
 (defn resolve-fight
   "Returns 1 if the player defeats a monster,
    0 if monster defeats the player"
   [monster player] (if 
                      (>= (*
-                           (get-race-bonus (:race player) (:spicies monster) 20) 
+                           (get-race-bonus (:race player) (:species monster) 20) 
                            (fight-number-calculator player 20 (:xp player)))
                          (fight-number-calculator monster 20))
                      1 0))
@@ -93,20 +93,20 @@
 
 ;Elf>Satyr>Human Human>Centaur>Orc Orc>Gnoll>Elf
 
-(defmethod multibonus "human" [race spicies percent] 
-  (condp = spicies
+(defmethod multibonus "human" [race species percent] 
+  (condp = species
     "satyr" (- 1 (* percent 0.01))
     "centaur" (+ 1 (* percent 0.01))
     "gnoll" 1))
 
-(defmethod multibonus "orc" [race spicies percent] 
-  (condp = spicies
+(defmethod multibonus "orc" [race species percent] 
+  (condp = species
     "satyr" 1
     "centaur" (- 1 (* percent 0.01))
     "gnoll" (+ 1 (* percent 0.01))))
 
-(defmethod multibonus "elf" [race spicies percent] 
-  (condp = spicies
+(defmethod multibonus "elf" [race species percent] 
+  (condp = species
     "satyr" (+ 1 (* percent 0.01))
     "centaur" 1
     "gnoll" (- 1 (* percent 0.01))))
